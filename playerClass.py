@@ -1,8 +1,11 @@
+from __future__ import annotations
 from dataclasses import dataclass, field
-from typing import Optional, Any
+from typing import Optional, Any, TYPE_CHECKING
 from abc import ABC, abstractmethod
-from gameClass import Game
 from dialogueClass import DialogueMove, FinalAction
+
+if TYPE_CHECKING:
+    from gameClass import Game
 
 @dataclass
 class Player: #this class is not the AI agent itself, it just represents the existence of a player within a game instance
