@@ -1,6 +1,37 @@
 from playerClass import Player
 from gameClass import Game
 from humanController import HumanController
+from agentClass import AgentController, AgentPersonality
+
+
+def choose_controller_for_player(player: Player):
+    print(f"\nConfigure controller for {player.name}:")
+    print("  1. Human")
+    print("  2. Agent")
+
+    while True:
+        controller_choice = input("Choose controller type (1 or 2): ").strip()
+        if controller_choice == "1":
+            return HumanController(player)
+        if controller_choice == "2":
+            break
+        print("  Invalid choice. Enter 1 or 2.")
+
+    personalities = list(AgentPersonality)
+    print("\n  Agent personalities:")
+    for i, personality in enumerate(personalities, start=1):
+        label = personality.name.replace("_", " ").title()
+        print(f"  {i}. {label}")
+
+    while True:
+        pick = input(f"Choose personality (1-{len(personalities)}): ").strip()
+        try:
+            index = int(pick) - 1
+            if 0 <= index < len(personalities):
+                return AgentController(player, personalities[index])
+            print(f"  Please enter a number between 1 and {len(personalities)}.")
+        except ValueError:
+            print("  Invalid input, enter a number.")
 
 
 def main():
@@ -15,8 +46,8 @@ def main():
     p1 = Player(player_id=1, name=name1)
     p2 = Player(player_id=2, name=name2)
 
-    p1.controller = HumanController(p1)
-    p2.controller = HumanController(p2)
+    p1.controller = choose_controller_for_player(p1)
+    p2.controller = choose_controller_for_player(p2)
 
     game = Game(players=[p1, p2], jackpot=jackpot, max_turns=max_turns)
 
