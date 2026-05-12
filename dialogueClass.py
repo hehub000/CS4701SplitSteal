@@ -6,7 +6,11 @@ class SpeechAct(Enum):
   PROMISE = auto()
   THREATEN = auto()
   ACCUSE = auto()
-  #etc etc will add more as needed
+  OFFER = auto()
+  COUNTER = auto()
+  QUESTION = auto()
+  CLARIFY = auto()
+  COUNTEROFFER = auto()
 
 class FinalAction(Enum):
   SPLIT = auto()
