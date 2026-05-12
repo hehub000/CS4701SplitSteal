@@ -1,37 +1,72 @@
+from pathlib import Path
+
 from playerClass import Player
 from gameClass import Game
 from humanController import HumanController
 from agentClass import AgentController, AgentPersonality
+from aiController import AIController
+from personalityClass import PersonalityVector
+
+
+def choose_personality_file() -> PersonalityVector:
+    """Prompt for a personality CSV path and load it into a PersonalityVector."""
+    # If a `personalities/` directory exists alongside the script, show its
+    # contents as a hint. Purely cosmetic — the user can still type any path.
+    personalities_dir = Path("personalities")
+    if personalities_dir.is_dir():
+        csv_files = sorted(personalities_dir.glob("*.csv"))
+        if csv_files:
+            print("\n  Personality files found in personalities/:")
+            for p in csv_files:
+                print(f"    - {p}")
+
+    while True:
+        path_str = input("  Path to personality CSV: ").strip()
+        if not path_str:
+            print("  Path cannot be empty.")
+            continue
+        try:
+            return PersonalityVector.from_csv(path_str)
+        except FileNotFoundError:
+            print(f"  File not found: {path_str}")
+        except ValueError as e:
+            print(f"  Could not load personality: {e}")
 
 
 def choose_controller_for_player(player: Player):
     print(f"\nConfigure controller for {player.name}:")
     print("  1. Human")
-    print("  2. Agent")
+    print("  2. Agent (rule-based baseline)")
+    print("  3. AI (trainable, loads personality from file)")
 
     while True:
-        controller_choice = input("Choose controller type (1 or 2): ").strip()
+        controller_choice = input("Choose controller type (1, 2, or 3): ").strip()
+
         if controller_choice == "1":
             return HumanController(player)
+
         if controller_choice == "2":
-            break
-        print("  Invalid choice. Enter 1 or 2.")
+            personalities = list(AgentPersonality)
+            print("\n  Agent personalities:")
+            for i, personality in enumerate(personalities, start=1):
+                label = personality.name.replace("_", " ").title()
+                print(f"  {i}. {label}")
 
-    personalities = list(AgentPersonality)
-    print("\n  Agent personalities:")
-    for i, personality in enumerate(personalities, start=1):
-        label = personality.name.replace("_", " ").title()
-        print(f"  {i}. {label}")
+            while True:
+                pick = input(f"Choose personality (1-{len(personalities)}): ").strip()
+                try:
+                    index = int(pick) - 1
+                    if 0 <= index < len(personalities):
+                        return AgentController(player, personalities[index])
+                    print(f"  Please enter a number between 1 and {len(personalities)}.")
+                except ValueError:
+                    print("  Invalid input, enter a number.")
 
-    while True:
-        pick = input(f"Choose personality (1-{len(personalities)}): ").strip()
-        try:
-            index = int(pick) - 1
-            if 0 <= index < len(personalities):
-                return AgentController(player, personalities[index])
-            print(f"  Please enter a number between 1 and {len(personalities)}.")
-        except ValueError:
-            print("  Invalid input, enter a number.")
+        if controller_choice == "3":
+            personality = choose_personality_file()
+            return AIController(player, personality)
+
+        print("  Invalid choice. Enter 1, 2, or 3.")
 
 
 def main():
