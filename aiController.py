@@ -31,8 +31,31 @@ class AIController(Controller):
         self._move_counter = 0
 
     def observe_dialogue_move(self, game: "Game", move: DialogueMove) -> None:
-        # Belief-update logic on opponent moves comes later.
-        # For now, beliefs only reflect their initial personality-derived values.
+        act = move.act
+
+        p = self.personality
+        b = self.beliefs
+        intends_split = b.intention == FinalAction.SPLIT
+
+        if act == SpeechAct.PROMISE:
+            b.suspicion_level -= 0.2 * b.trust_in_opponent
+            b.trust_in_opponent += 0.1 * p.trust_baseline
+        
+        if act == SpeechAct.THREATEN:
+            b.suspicion_level += 0.2 * b.trust_in_opponent
+
+        
+        if act == SpeechAct.ACCUSE:
+            b.suspicion_level += 0.2 * p.aggression
+            b.trust_in_opponent += 0.1 * p.cooperativeness
+        
+        if act == SpeechAct.OFFER:
+            b.suspicion_level -= 0.2 * p.cooperativeness
+            b.trust_in_opponent += 0.1 * p.trust_baseline
+        
+        if act == SpeechAct.QUESTION:
+            b.trust_in_opponent -= (p.trust_baseline - p.aggression)
+
         return None
 
     def choose_dialogue_move(self, game: "Game") -> DialogueMove:
@@ -70,37 +93,48 @@ class AIController(Controller):
         b = self.beliefs
         intends_split = b.intention == FinalAction.SPLIT
 
-        # PROMISE: cooperative tone, claim "split".
+        # PROMISE: claim "split".
         # Honest if intention is split. If intention is steal, only attractive
         # when lie_propensity is high (false promise as bait).
         promise_score = (
-            0.5
-            + p.trust_baseline
-            + b.trust_in_opponent
-            + (1.0 if intends_split else p.lie_propensity)
+                p.trust_baseline if intends_split else
+                p.lie_propensity
         )
 
         # THREATEN: aggressive tone, claim "steal".
         # Most natural when intention is steal; suspicion and aggression boost it.
         threaten_score = (
-            0.2
             + p.aggression
             + b.suspicion_level
-            + (1.0 if not intends_split else 0.0)
+            + (1.0 - p.lie_propensity if not intends_split else 0.0)
         )
 
-        # ACCUSE: confrontational; mostly driven by suspicion and some aggression.
-        # Agent claims the moral high ground ("split").
+        # ACCUSE: prompt, claim "steal"
+        # Agent claims steal and prompts opponent to convince them not to.
         accuse_score = (
-            0.2
             + b.suspicion_level
-            + 0.5 * p.aggression
+            + p.aggression
         )
+
+        ## OFFER: prompt, claim split
+        # Agent claims split and prompts opponent to agree
+        offer_score = (
+            p.cooperativeness - p.aggression if intends_split else p.lie_propensity
+        )
+
+        ## QUESTION: prompt, no claim
+        # Agent asks what opponent will do
+        question_score = (
+            1.0 - abs(p.trust_baseline - b.suspicion_level)
+        )
+
 
         return {
             SpeechAct.PROMISE: promise_score,
             SpeechAct.THREATEN: threaten_score,
             SpeechAct.ACCUSE: accuse_score,
+            SpeechAct.OFFER: offer_score,
+            SpeechAct.QUESTION: question_score
         }
 
     def _sample(self, scores: dict[SpeechAct, float]) -> SpeechAct:
@@ -124,8 +158,13 @@ class AIController(Controller):
                 "text": "If you don't split, I'll steal and you get nothing.",
                 "claim_action": "steal",
             }
-        # ACCUSE
-        return {
-            "text": "You're not being straight with me. I'm splitting; you should too.",
-            "claim_action": "split",
-        }
+        if act == SpeechAct.ACCUSE:
+            return {
+                "text": "You're lying about splitting, so I'll steal too. Why should I believe you?",
+                "claim_action": "steal",
+            }
+        if act == SpeechAct.OFFER:
+            return {
+                "text": "If we both steal, we both get nothing. Why don't we both just split it?",
+                "claim_action": "split",
+            }

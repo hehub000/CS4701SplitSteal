@@ -76,7 +76,7 @@ def main():
     name2 = input("Enter name for Player 2: ").strip() or "Player 2"
 
     jackpot = 100.0
-    max_turns = 6
+    max_turns = 12
 
     p1 = Player(player_id=1, name=name1)
     p2 = Player(player_id=2, name=name2)

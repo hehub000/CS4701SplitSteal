@@ -7,10 +7,7 @@ class SpeechAct(Enum):
   THREATEN = auto()
   ACCUSE = auto()
   OFFER = auto()
-  COUNTER = auto()
   QUESTION = auto()
-  CLARIFY = auto()
-  COUNTEROFFER = auto()
 
 class FinalAction(Enum):
   SPLIT = auto()

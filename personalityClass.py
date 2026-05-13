@@ -21,12 +21,16 @@ class PersonalityVector:
     aggression: float = 0.5      # tendency to threaten, accuse, push hard
     trust_baseline: float = 0.5  # default willingness to believe the opponent
     lie_propensity: float = 0.5  # willingness to say things that don't match intent
+    evasiveness: float = 0.5 # tendency to not respond to questions in the belief state
+    cooperativeness: float = 0.5 # reaction to opponents intent to split
 
     def clamp(self) -> None:
         """Keep all trait values within [0, 1] after any RL update."""
         self.aggression = max(0.0, min(1.0, self.aggression))
         self.trust_baseline = max(0.0, min(1.0, self.trust_baseline))
         self.lie_propensity = max(0.0, min(1.0, self.lie_propensity))
+        self.evasiveness = max(0.0, min(1.0, self.evasiveness))
+        self.cooperativeness = max(0.0, min(1.0, self.cooperativeness))
 
     @classmethod
     def from_csv(cls, path: str | Path) -> "PersonalityVector":
