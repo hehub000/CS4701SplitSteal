@@ -13,6 +13,15 @@ class FinalAction(Enum):
   SPLIT = auto()
   STEAL = auto()
 
+# Speech acts that prompt a response from the opponent. Used by belief tracking
+# to decide which moves should be added to "open prompts" lists so the agent
+# can later choose whether to answer them.
+PROMPT_ACTS: frozenset[SpeechAct] = frozenset({
+    SpeechAct.QUESTION,
+    SpeechAct.OFFER,
+    SpeechAct.ACCUSE,
+})
+
 @dataclass
 class DialogueMove:
     move_id: int
