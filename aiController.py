@@ -99,6 +99,10 @@ class AIController(Controller):
                 b.trust_in_opponent -= (p.trust_baseline - p.aggression)
 
         b.clamp()
+        if b.suspicion_level > (p.trust_baseline):
+            b.intention = FinalAction.STEAL
+        else:
+            b.intention = FinalAction.SPLIT
         return None
 
     def choose_dialogue_move(self, game: "Game") -> DialogueMove:
