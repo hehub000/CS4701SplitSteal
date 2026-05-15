@@ -12,8 +12,8 @@ class PersonalityVector:
     All values are in [0, 1]. More fields will be added later.
 
     CSV file format (two rows):
-        aggression,trust_baseline,lie_propensity
-        0.9,0.1,0.8
+        aggression,trust_baseline,lie_propensity,evasiveness,cooperativeness
+        0.9,0.1,0.8,0.6,0.2
 
     Unknown columns are ignored. Missing columns fall back to dataclass defaults,
     which makes the file format forward-compatible when we add traits later.
@@ -21,8 +21,8 @@ class PersonalityVector:
     aggression: float = 0.5      # tendency to threaten, accuse, push hard
     trust_baseline: float = 0.5  # default willingness to believe the opponent
     lie_propensity: float = 0.5  # willingness to say things that don't match intent
-    evasiveness: float = 0.5 # tendency to not respond to questions in the belief state
-    cooperativeness: float = 0.5 # reaction to opponents intent to split
+    evasiveness: float = 0.5  # tendency to avoid responding to prompts
+    cooperativeness: float = 0.5  # willingness to reciprocate split-oriented behavior
 
     def clamp(self) -> None:
         """Keep all trait values within [0, 1] after any RL update."""
