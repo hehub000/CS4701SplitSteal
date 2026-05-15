@@ -1,2 +1,2 @@
-aggression,trust_baseline,lie_propensity
-0.1,0.9,0.1
+aggression,trust_baseline,lie_propensity,evasiveness,cooperativeness
+0.1,0.9,0.1,0.1,0.9
