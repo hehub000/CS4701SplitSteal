@@ -1,0 +1,44 @@
+{
+  "episodes": 1000,
+  "mean_score": 0.312,
+  "mean_payout": 31.2,
+  "per_target": {
+    "always_split": {
+      "count": 200,
+      "mean_score": 0.7775,
+      "mean_payout": 77.75,
+      "both_steal_rate": 0.0
+    },
+    "always_steal": {
+      "count": 200,
+      "mean_score": 0.0,
+      "mean_payout": 0.0,
+      "both_steal_rate": 0.61
+    },
+    "deceptive_threaten": {
+      "count": 200,
+      "mean_score": 0.0,
+      "mean_payout": 0.0,
+      "both_steal_rate": 0.495
+    },
+    "honest": {
+      "count": 200,
+      "mean_score": 0.7825,
+      "mean_payout": 78.25,
+      "both_steal_rate": 0.0
+    },
+    "tit_for_tat": {
+      "count": 200,
+      "mean_score": 0.0,
+      "mean_payout": 0.0,
+      "both_steal_rate": 0.53
+    }
+  },
+  "updates": {
+    "count": 1000,
+    "policy_loss_mean": -0.007845154234208167,
+    "value_loss_mean": 0.199698824671584,
+    "entropy_mean": 0.18678926661490391,
+    "loss_mean": 0.09013636518472048
+  }
+}

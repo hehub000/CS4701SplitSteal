@@ -1,0 +1,4 @@
+personality_file,name,ppo_mean_payout,ppo_mean_normalized,ppo_win_rate,n_eval_episodes
+trained_personalities/best_aggressive.csv,best_aggressive,36.5,0.365,0.4,100
+trained_personalities/best_deceiver.csv,best_deceiver,33.5,0.335,0.4,100
+trained_personalities/best_trusting.csv,best_trusting,59.0,0.59,0.59,100

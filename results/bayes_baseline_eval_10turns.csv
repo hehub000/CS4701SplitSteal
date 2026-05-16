@@ -1,0 +1,4 @@
+personality_file,name,bayes_mean_payout,bayes_mean_normalized,bayes_win_rate,n_episodes
+trained_personalities/best_aggressive.csv,best_aggressive,49.0,0.49,0.49,100
+trained_personalities/best_deceiver.csv,best_deceiver,52.0,0.52,0.52,100
+trained_personalities/best_trusting.csv,best_trusting,26.5,0.265,0.53,100
